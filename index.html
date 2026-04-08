@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Contador de Calorías</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+    }
+    
+    button {
+      background: #00ff88;
+      color: black;
+      font-weight: bold;
+    }
+    .comida {
+      background: #222;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔥 Calorías del Día</h1>
+
+  <input type="text" id="nombre" placeholder="Comida">
+  <input type="number" id="calorias" placeholder="Calorías">
+  <br>
+  <button onclick="agregarComida()">Agregar</button>
+
+  <h2>Total: <span id="total">0</span> kcal</h2>
+
+  <div id="lista"></div>
+
+  <script>
+    let comidas = JSON.parse(localStorage.getItem("comidas")) || [];
+
+    function guardar() {
+      localStorage.setItem("comidas", JSON.stringify(comidas));
+    }
+
+    function mostrar() {
+      let lista = document.getElementById("lista");
+      let total = 0;
+      lista.innerHTML = "";
+
+      comidas.forEach((c, i) => {
+        total += c.calorias;
+        lista.innerHTML += `
+          <div class="comida">
+            ${c.nombre} - ${c.calorias} kcal
+            <button onclick="eliminar(${i})">❌</button>
+          </div>
+        `;
+      });
+
+      document.getElementById("total").innerText = total;
+    }
+
+    function agregarComida() {
+      let nombre = document.getElementById("nombre").value;
+      let calorias = parseInt(document.getElementById("calorias").value);
+
+      if (!nombre || !calorias) {
+        alert("Completa los datos");
+        return;
+      }
+
+      comidas.push({ nombre, calorias });
+      guardar();
+      mostrar();
+
+      document.getElementById("nombre").value = "";
+      document.getElementById("calorias").value = "";
+    }
+
+    function eliminar(index) {
+      comidas.splice(index, 1);
+      guardar();
+      mostrar();
+    }
+
+    mostrar();
+  </script>
+
+</body>
+</html>
